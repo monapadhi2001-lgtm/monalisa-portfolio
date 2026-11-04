@@ -59,7 +59,13 @@ export default function Experience({ onBackgroundClick, onReady, active, ...depo
       frameloop={active ? "always" : "never"}
       gl={{ alpha: true, antialias: tier === "high", powerPreference: "high-performance" }}
       camera={{ position: [0, 7, 34], fov: FOV, near: 0.1, far: 120 }}
-      onPointerMissed={onBackgroundClick}
+      onPointerMissed={(e) => {
+        // The HTML inside an open container (drei <Html>) sits in the canvas's
+        // event source, so a click on its buttons also reaches R3F as a "miss".
+        // Without this check, "Explore project" would close the container.
+        if (e.target instanceof Element && e.target.closest("[data-scene-ui]")) return;
+        onBackgroundClick();
+      }}
       onCreated={() => {
         // Wait two frames so shaders are compiled before the loader leaves.
         requestAnimationFrame(() => requestAnimationFrame(onReady));

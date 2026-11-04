@@ -39,7 +39,8 @@ export function ContainerContent({ project, visible, onExplore, onClose, compact
         style={{ pointerEvents: visible ? "auto" : "none" }}
       >
         <div
-          className="flex h-[230px] w-[560px] flex-col justify-end pb-6 text-left text-white transition-all duration-700 ease-out"
+          data-scene-ui
+        className="flex h-[230px] w-[560px] flex-col justify-end pb-6 text-left text-white transition-all duration-700 ease-out"
           style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(8px)" }}
         >
           <p className="font-mono text-[18px] font-bold tracking-[0.2em] text-white/70 uppercase">
@@ -77,6 +78,7 @@ export function ContainerContent({ project, visible, onExplore, onClose, compact
       style={{ pointerEvents: visible ? "auto" : "none" }}
     >
       <div
+        data-scene-ui
         className="flex h-[230px] w-[560px] flex-col justify-end pb-6 text-left text-white transition-all duration-700 ease-out"
         style={{
           opacity: visible ? 1 : 0,

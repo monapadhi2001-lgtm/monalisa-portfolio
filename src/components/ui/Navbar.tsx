@@ -15,7 +15,7 @@ export function Navbar({ onScrollTo, onHome }: Props) {
     <header className="reveal pointer-events-auto absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-5 md:px-10">
       <button
         onClick={onHome}
-        className="font-display text-2xl leading-none tracking-tight text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        className="whitespace-nowrap font-display text-xl leading-none tracking-tight text-white md:text-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         aria-label={`${SITE.name}, back to the top`}
       >
         {SITE.wordmark}
@@ -35,7 +35,7 @@ export function Navbar({ onScrollTo, onHome }: Props) {
 
       <button
         onClick={() => onScrollTo("contact")}
-        className="text-[13px] font-medium text-white/90 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        className="whitespace-nowrap text-[13px] font-medium text-white/90 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
       >
         Let&apos;s Talk ↗
       </button>

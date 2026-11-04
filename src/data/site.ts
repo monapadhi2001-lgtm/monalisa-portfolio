@@ -6,7 +6,7 @@
 export const SITE = {
   name: "Monalisa Padhi",
   /** Short wordmark shown in the top-left corner. */
-  wordmark: "monalisa",
+  wordmark: "Monalisa Padhi",
   caption: "Monalisa Padhi · Project depot · 7 containers · 2026",
   /** One line under the hero. Edit freely. */
   tagline: "Strategy, numbers and stories, packed into seven containers.",
