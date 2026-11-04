@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+/* `wide:` = screens wider than tall-ish (matches the 3D layout switch in Experience.tsx). */
+@custom-variant wide (@media (min-aspect-ratio: 9/10));
+
+/*
+ * Design tokens. Change these to re-skin the whole site.
+ * `inline` lets them point at the next/font CSS variables from layout.tsx.
+ */
+@theme inline {
+  --font-display: var(--font-archivo), "Arial Black", Impact, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+/* Brand colours (mirrored in src/lib/constants.ts for the 3D scene). */
+:root {
+  --harbor: #1b5bff; /* electric blue background */
+  --cream: #efe9dc; /* PORTFOLIO lettering */
+  --signal: #ff8a1f; /* status dot */
+  --accent: #9dbcff; /* highlighted word inside containers */
+  --deep: #0f3fc4; /* manifest section below the hero */
+}
+
+html {
+  scrollbar-gutter: stable; /* no layout jump when scrolling locks during a project */
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--harbor);
+  color: #fff;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overscroll-behavior: none;
+}
+
+/* The little line in the "Scroll" cue. */
+.scroll-tick {
+  animation: scroll-tick 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes scroll-tick {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(260%); }
+}
+
+/* Respect visitors who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
