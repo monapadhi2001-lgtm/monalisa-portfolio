@@ -16,7 +16,7 @@ export function Manifest({ onOpen }: { onOpen: (id: string) => void }) {
       className="relative z-10 scroll-mt-4 bg-[color:var(--deep)] px-6 py-24 md:px-10 md:py-32"
     >
       <div className="mx-auto max-w-5xl">
-        <p className="font-mono text-[11px] tracking-[0.24em] text-white/60 uppercase">
+        <p className="font-mono text-[11px] tracking-[0.24em] text-white/80 uppercase">
           Bill of lading · {SITE.name}
         </p>
         <h2
@@ -43,13 +43,13 @@ export function Manifest({ onOpen }: { onOpen: (id: string) => void }) {
                   }}
                 />
                 <span className="min-w-0">
-                  <span className="block font-mono text-[11px] tracking-[0.16em] text-white/55 tabular-nums">
+                  <span className="block font-mono text-[11px] tracking-[0.16em] text-white/75 tabular-nums">
                     {p.code} · {p.year}
                   </span>
                   <span className="font-display block text-xl tracking-[-0.01em] text-white md:text-2xl">{p.title}</span>
-                  <span className="mt-0.5 block text-[12px] text-white/55">{p.category}</span>
+                  <span className="mt-0.5 block text-[12px] text-white/75">{p.category}</span>
                 </span>
-                <span className="hidden min-w-0 text-[14px] leading-relaxed text-white/65 md:block">{p.summary}</span>
+                <span className="hidden min-w-0 text-[14px] leading-relaxed text-white/80 md:block">{p.summary}</span>
                 <span className="font-mono text-[11px] tracking-[0.14em] whitespace-nowrap text-white/80 uppercase group-hover:text-white">
                   Open ↑
                 </span>

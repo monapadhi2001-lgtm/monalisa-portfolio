@@ -41,7 +41,7 @@ export function PdfViewer({ doc, accent }: { doc: CaseStudy; accent: string }) {
             href={doc.src}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full px-3.5 py-1.5 text-[12px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex min-h-9 items-center rounded-full px-4 py-2 text-[12px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             style={{ background: accent, color: textOn(accent) }}
           >
             Open PDF ↗
@@ -50,7 +50,7 @@ export function PdfViewer({ doc, accent }: { doc: CaseStudy; accent: string }) {
             <a
               href={doc.src}
               download
-              className="rounded-full border border-white/25 px-3.5 py-1.5 text-[12px] text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white"
+              className="inline-flex min-h-9 items-center rounded-full border border-white/25 px-4 py-2 text-[12px] text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white"
             >
               Download
             </a>

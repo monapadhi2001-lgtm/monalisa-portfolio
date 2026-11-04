@@ -146,13 +146,13 @@ export function WebsitePreview({ site, accent }: { site: Website; accent: string
             href={site.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex min-h-9 shrink-0 items-center rounded-full px-4 py-2 text-[12px] font-semibold transition-transform hover:scale-[1.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             style={{ background: accent, color: textOn(accent) }}
           >
             Open site ↗
           </a>
         ) : (
-          <span className="shrink-0 rounded-full border border-white/20 px-3.5 py-1.5 text-[12px] text-white/55">
+          <span className="shrink-0 rounded-full border border-white/20 px-4 py-2 text-[12px] text-white/70">
             Coming soon
           </span>
         )}

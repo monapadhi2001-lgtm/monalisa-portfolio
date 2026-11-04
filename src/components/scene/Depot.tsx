@@ -10,6 +10,7 @@ import { PROJECTS } from "@/data/projects";
 import { slotFor, type Layout } from "@/data/site";
 import { CONTAINER, CRANE, LIFT } from "@/lib/constants";
 import { heroState } from "@/lib/heroState";
+import { prefersReducedMotion } from "@/lib/motion";
 import { Crane, hookPosition, type CraneState } from "./Crane";
 import { ProjectContainer, type ContainerHandle } from "./ProjectContainer";
 import { ContainerContent } from "./ContainerContent";
@@ -93,7 +94,7 @@ export function Depot({
   // ---- Intro: containers drop into the pile, trolley rolls in ---------------
   useGSAP(
     () => {
-      if (!started) return;
+      if (!started || prefersReducedMotion()) return;
       const tl = gsap.timeline({ delay: 0.25 });
       PROJECTS.forEach((s, i) => {
         const h = handles.current.get(s.id);
@@ -159,7 +160,7 @@ export function Depot({
         .to(crane, { cable: grab - 0.35, duration: 0.4, ease: "power2.out" })
         .to(h.group.rotation, { x: 0, y: 0, z: 0, duration: 0.5, ease: "power2.out" }, "<")
         // Lift and swing into the spotlight while the camera moves in.
-        .to(crane, { x: LIFT.x(layoutRef.current), z: CRANE.railZ, cable: LIFT.cable, scale: LIFT.scale, duration: 1.3, ease: "power3.inOut" })
+        .to(crane, { x: LIFT.x(layoutRef.current), z: LIFT.z(layoutRef.current), cable: LIFT.cable, scale: LIFT.scale, duration: 1.3, ease: "power3.inOut" })
         .to(heroState, { focus: 1, duration: 1.6, ease: "power3.inOut" }, "<0.15")
         // A beat of stillness, then the doors swing open and light spills out.
         .to(h.leftDoor.rotation, { y: -CONTAINER.doorOpenAngle, duration: 1.0, ease: "back.out(1.5)" }, "+=0.1")
@@ -254,7 +255,13 @@ export function Depot({
           onSelect={onSelect}
         >
           {openId === s.id && (
-            <ContainerContent project={s} visible={phase === "open"} onExplore={onExplore} onClose={onCloseContainer} />
+            <ContainerContent
+              project={s}
+              visible={phase === "open"}
+              onExplore={onExplore}
+              onClose={onCloseContainer}
+              compact={layout === "tall"}
+            />
           )}
         </ProjectContainer>
       ))}

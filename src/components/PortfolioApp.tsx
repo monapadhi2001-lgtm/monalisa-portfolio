@@ -14,6 +14,7 @@ import { Manifest } from "@/components/ui/Manifest";
 import { AboutContact } from "@/components/ui/AboutContact";
 import { ProjectPanel } from "@/components/project/ProjectPanel";
 import { heroState } from "@/lib/heroState";
+import { prefersReducedMotion } from "@/lib/motion";
 import { SITE } from "@/data/site";
 import { PROJECTS, projectById } from "@/data/projects";
 import type { Phase } from "@/components/scene/Depot";
@@ -50,6 +51,15 @@ export default function PortfolioApp() {
   requested.current = requestedId;
   const detailRef = useRef(detailOpen);
   detailRef.current = detailOpen;
+  /** Pause 3D rendering while the hero is scrolled out of view (saves battery). */
+  const [heroVisible, setHeroVisible] = useState(true);
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setHeroVisible(e.isIntersecting), { rootMargin: "0px 0px -98% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const onPhaseChange = useCallback((p: Phase, id: string | null) => {
     setPhase(p);
@@ -128,6 +138,12 @@ export default function PortfolioApp() {
   useGSAP(
     () => {
       if (!started) return;
+      if (prefersReducedMotion()) {
+        // Reduced motion: no dolly or letter animation, and crane moves play faster.
+        heroState.intro = 1;
+        gsap.globalTimeline.timeScale(1.8);
+        return;
+      }
       gsap.to(heroState, { intro: 1, duration: 2.6, ease: "power3.out" });
       gsap.from(".backdrop-letter", { yPercent: 110, duration: 1.2, ease: "power4.out", stagger: 0.055, delay: 0.35 });
       gsap.from(".reveal", { autoAlpha: 0, y: -8, duration: 0.8, stagger: 0.08, delay: 1.1 });
@@ -160,7 +176,13 @@ export default function PortfolioApp() {
 
   return (
     <main ref={root} className="relative w-full bg-[color:var(--harbor)]">
-      <h1 className="sr-only">{SITE.name} — portfolio</h1>
+      <a
+        href="#manifest"
+        className="sr-only z-[70] rounded-full bg-white px-4 py-2 font-semibold text-[color:var(--harbor)] focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to the project list
+      </a>
+      <h1 className="sr-only">{SITE.name} — portfolio of projects, shown as an interactive 3D container depot</h1>
       <Loader ready={sceneReady && fontsReady} onDone={() => setStarted(true)} />
 
       {/* Scroll track: tall box; the hero inside it sticks to the screen. */}
@@ -182,12 +204,13 @@ export default function PortfolioApp() {
               onCloseContainer={close}
               onBackgroundClick={() => (detailRef.current ? closeDetail() : close())}
               onReady={onReady}
+              active={heroVisible}
             />
           </div>
 
           <CinemaOverlay />
           <Navbar onScrollTo={scrollToSection} onHome={() => openFromAnywhere(null)} />
-          <Hud phase={phase} openId={openId} hoveredId={hoveredId} onClose={close} />
+          <Hud phase={phase} openId={openId} hoveredId={hoveredId} onClose={close} detailOpen={detailOpen} />
         </div>
       </div>
 

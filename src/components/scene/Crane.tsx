@@ -12,7 +12,7 @@ import { CONTAINER, CRANE, COLORS } from "@/lib/constants";
  */
 export type CraneState = {
   x: number; // trolley position along the rail
-  z: number; // depth of the hook
+  z: number; // depth of the gantry (rail, trolley and hook move together)
   cable: number; // cable length
   scale: number; // size of the spreader (matches the carried container)
 };
@@ -25,6 +25,7 @@ export function hookPosition(c: CraneState, target = new THREE.Vector3()) {
 const UP = new THREE.Vector3(0, 1, 0);
 
 export function Crane({ state }: { state: CraneState }) {
+  const rail = useRef<THREE.Mesh>(null!);
   const trolley = useRef<THREE.Group>(null!);
   const cable = useRef<THREE.Mesh>(null!);
   const spreader = useRef<THREE.Group>(null!);
@@ -43,9 +44,11 @@ export function Crane({ state }: { state: CraneState }) {
   const dir = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(() => {
-    trolley.current.position.set(state.x, CRANE.railY, CRANE.railZ);
+    // The whole gantry moves in depth, so the cable always hangs straight down.
+    rail.current.position.z = state.z;
+    trolley.current.position.set(state.x, CRANE.railY, state.z);
 
-    top.set(state.x, CRANE.railY - CRANE.trolleyDrop, CRANE.railZ);
+    top.set(state.x, CRANE.railY - CRANE.trolleyDrop, state.z);
     hookPosition(state, hook);
 
     // Stretch a unit-length cylinder between the trolley and the hook.
@@ -63,15 +66,10 @@ export function Crane({ state }: { state: CraneState }) {
 
   return (
     <group>
-      {/* Rail spanning the whole screen, with a few hangers up to the "ceiling" */}
-      <mesh material={steel} position={[0, CRANE.railY, CRANE.railZ]} rotation={[0, 0, Math.PI / 2]}>
+      {/* Rail spanning the whole screen (nothing above it, as in the reference) */}
+      <mesh ref={rail} material={steel} position={[0, CRANE.railY, CRANE.railZ]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.07, 0.07, 40, 16]} />
       </mesh>
-      {[-12, -4, 4, 12].map((x) => (
-        <mesh key={x} material={steel} position={[x, CRANE.railY + 1.5, CRANE.railZ]}>
-          <cylinderGeometry args={[0.03, 0.03, 3, 8]} />
-        </mesh>
-      ))}
 
       {/* Trolley riding on the rail */}
       <group ref={trolley}>

@@ -10,6 +10,8 @@ type Props = {
   visible: boolean;
   onExplore: () => void;
   onClose: () => void;
+  /** Phones: the container is smaller on screen, so show fewer, larger items. */
+  compact?: boolean;
 };
 
 /**
@@ -19,13 +21,52 @@ type Props = {
  * It's real HTML (drei <Html transform>), so it moves with the 3D container
  * but stays sharp and clickable.
  */
-export function ContainerContent({ project, visible, onExplore, onClose }: Props) {
+export function ContainerContent({ project, visible, onExplore, onClose, compact = false }: Props) {
   const [first, ...rest] = project.title.split(" ");
   const media = [
     project.photos?.length && `${project.photos.length} photos`,
     project.videos?.length && `${project.videos.length} video${project.videos.length > 1 ? "s" : ""}`,
     project.caseStudies?.length && "case study",
   ].filter(Boolean);
+
+  if (compact) {
+    return (
+      <Html
+        transform
+        distanceFactor={2}
+        position={[0, 0, -CONTAINER.depth / 2 + 0.08]}
+        zIndexRange={[10, 0]}
+        style={{ pointerEvents: visible ? "auto" : "none" }}
+      >
+        <div
+          className="flex h-[230px] w-[560px] flex-col justify-end pb-6 text-left text-white transition-all duration-700 ease-out"
+          style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(8px)" }}
+        >
+          <p className="font-mono text-[18px] font-bold tracking-[0.2em] text-white/70 uppercase">
+            {project.code.replace("PD-", "")} / {project.category.split("·")[0].trim()}
+          </p>
+          <h2 className="mt-2 font-sans text-[64px] leading-[0.95] font-bold tracking-tight">
+            {first}{" "}
+            <em className="font-semibold" style={{ color: project.color === "#9aa3ae" ? "#c9d0d8" : project.color }}>
+              {rest.join(" ")}
+            </em>
+          </h2>
+          <div className="mt-5 flex items-center gap-3">
+            <button
+              onClick={onExplore}
+              className="rounded-full px-7 py-3 text-[24px] font-semibold"
+              style={{ background: project.color, color: textOn(project.color) }}
+            >
+              Explore project →
+            </button>
+            <button onClick={onClose} className="rounded-full border-2 border-white/40 px-6 py-3 text-[24px] text-white">
+              Close
+            </button>
+          </div>
+        </div>
+      </Html>
+    );
+  }
 
   return (
     <Html

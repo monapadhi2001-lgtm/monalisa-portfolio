@@ -100,7 +100,7 @@ export function ProjectPanel({ project, open, onClose, onNext }: Props) {
             <button
               ref={closeBtn}
               onClick={onClose}
-              className="rounded-full border border-white/30 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors hover:bg-white hover:text-[#0a1230] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="min-h-10 rounded-full border border-white/30 px-4 py-2 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors hover:bg-white hover:text-[#0a1230] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Back to container ✕
             </button>

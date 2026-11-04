@@ -1,10 +1,10 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
-import { GROUND_Y } from "@/lib/constants";
+import { GROUND_Y, LIFT } from "@/lib/constants";
 import { heroState } from "@/lib/heroState";
 import type { Layout } from "@/data/site";
 import { Depot, type Phase } from "./Depot";
@@ -23,7 +23,22 @@ type Props = {
   onBackgroundClick: () => void;
   /** Called once the first frames have rendered (used by the loading screen). */
   onReady: () => void;
+  /** False when the hero is scrolled out of view: rendering pauses to save battery. */
+  active: boolean;
 };
+
+/**
+ * Quality tiers. Phones and tablets (coarse pointer or narrow screen) start on
+ * "low": lower pixel ratio, smaller shadow maps, no antialiasing on high-DPI
+ * screens. PerformanceMonitor then steps quality down further if the frame
+ * rate drops, and back up if there is headroom. The look stays the same.
+ */
+type Tier = "high" | "low";
+function initialTier(): Tier {
+  if (typeof window === "undefined") return "high";
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  return coarse || window.innerWidth < 768 ? "low" : "high";
+}
 
 const FOV = 35;
 
@@ -31,14 +46,18 @@ const FOV = 35;
  * The WebGL canvas. It is transparent, so the electric-blue background and
  * the giant "PORTFOLIO" word (plain HTML) show through behind the containers.
  */
-export default function Experience({ onBackgroundClick, onReady, ...depotProps }: Props) {
+export default function Experience({ onBackgroundClick, onReady, active, ...depotProps }: Props) {
+  const [tier] = useState<Tier>(initialTier);
+  const [dpr, setDpr] = useState(tier === "low" ? 1.25 : 1.75);
+
   return (
     <Canvas
       style={{ position: "absolute", inset: 0 }}
       shadows="soft"
       flat // no tone mapping → colours stay as bright as in the design
-      dpr={[1, 1.75]}
-      gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+      dpr={dpr}
+      frameloop={active ? "always" : "never"}
+      gl={{ alpha: true, antialias: tier === "high", powerPreference: "high-performance" }}
       camera={{ position: [0, 7, 34], fov: FOV, near: 0.1, far: 120 }}
       onPointerMissed={onBackgroundClick}
       onCreated={() => {
@@ -46,15 +65,22 @@ export default function Experience({ onBackgroundClick, onReady, ...depotProps }
         requestAnimationFrame(() => requestAnimationFrame(onReady));
       }}
     >
-      <Scene {...depotProps} />
+      {/* Adaptive resolution: drop the pixel ratio if frames get slow, raise it if there's headroom */}
+      <PerformanceMonitor
+        onDecline={() => setDpr((d) => Math.max(1, d - 0.25))}
+        onIncline={() => setDpr((d) => Math.min(tier === "low" ? 1.5 : 2, d + 0.25))}
+        flipflops={3}
+        onFallback={() => setDpr(1)}
+      />
+      <Scene {...depotProps} tier={tier} />
     </Canvas>
   );
 }
 
-function Scene(props: Omit<Props, "onBackgroundClick" | "onReady">) {
+function Scene({ tier, ...props }: Omit<Props, "onBackgroundClick" | "onReady" | "active"> & { tier: Tier }) {
   const size = useThree((s) => s.size);
   const layout: Layout = size.width / size.height < 0.9 ? "tall" : "wide";
-  const mobile = size.width < 768;
+  const mobile = tier === "low";
 
   return (
     <>
@@ -79,7 +105,7 @@ function Scene(props: Omit<Props, "onBackgroundClick" | "onReady">) {
       <directionalLight color="#ffffff" position={[0, -2, 10]} intensity={0.25} />
 
       {/* Studio reflections built from light panels — nothing is downloaded */}
-      <Environment resolution={128}>
+      <Environment resolution={mobile ? 64 : 128}>
         <Lightformer intensity={2} position={[0, 5, 5]} scale={[10, 3, 1]} />
         <Lightformer intensity={1.2} position={[-6, 1, 3]} scale={[3, 6, 1]} color="#b9ccff" />
         <Lightformer intensity={1} position={[6, 1, 3]} scale={[3, 6, 1]} color="#ffe6c7" />
@@ -121,7 +147,7 @@ function CameraRig({ layout }: { layout: Layout }) {
   useFrame((_, delta) => {
     const aspect = size.width / size.height;
     // Width of the scene that must stay visible (pile + a little margin).
-    const needed = layout === "tall" ? 10.8 : 15.4;
+    const needed = layout === "tall" ? 7.8 : 15.4;
     const base = THREE.MathUtils.clamp(needed / (2 * tan * aspect), 14, 40);
 
     smooth.scroll = THREE.MathUtils.damp(smooth.scroll, heroState.scroll, 5, delta);
@@ -143,14 +169,19 @@ function CameraRig({ layout }: { layout: Layout }) {
       const p = heroState.panel; // detail panel open → make room for it
       let fx: number, fy: number, fz: number, flx: number, fly: number;
       if (layout === "wide") {
-        fz = base * 0.96 + p * 2.2;
-        const shift = p * 3.7; // container slides to the left half while the panel is open
+        fz = base * 0.96 + p * 3;
+        // While the panel is open, centre the container in the space left of it.
+        // The panel is min(600px, 50vw) wide (see ProjectPanel).
+        const panelFrac = Math.min(600, size.width * 0.5) / size.width;
+        const visW = 2 * tan * fz * aspect;
+        const shift = p * (panelFrac / 2) * visW;
         fx = shift + pointer.x * 0.25 * (1 - p);
         fy = 1.9 + pointer.y * 0.15 * (1 - p);
         flx = shift;
         fly = 1.25;
       } else {
-        fz = THREE.MathUtils.clamp(7.8 / (2 * tan * aspect), 9, 44);
+        // The lifted container sits forward on tall screens (LIFT.z), so add that distance.
+        fz = THREE.MathUtils.clamp(8.6 / (2 * tan * aspect), 9, 48) + LIFT.z("tall");
         const visH = 2 * tan * fz;
         fx = 0;
         fly = 1.7 - visH * (0.16 + p * 0.16); // container in the top third; higher still above the sheet

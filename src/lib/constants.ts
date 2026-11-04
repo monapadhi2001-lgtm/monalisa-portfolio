@@ -31,6 +31,11 @@ export const LIFT = {
   },
   /** Horizontal position of the lifted container (centre on every screen). */
   x: (_layout: "wide" | "tall") => 0,
+  /**
+   * Depth of the lifted container. On tall screens the pile is stacked
+   * deeper, so the container comes forward to stay clear of it.
+   */
+  z: (layout: "wide" | "tall") => (layout === "tall" ? 1.9 : 0.1),
 };
 
 /** Ground plane the pile rests on. */

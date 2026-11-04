@@ -8,7 +8,7 @@ export function AboutContact() {
     <footer className="relative z-10 bg-[color:var(--harbor)] px-6 py-24 md:px-10 md:py-32">
       <div className="mx-auto grid max-w-5xl gap-16 md:grid-cols-2">
         <section id="about" aria-labelledby="about-title" className="scroll-mt-8">
-          <p className="font-mono text-[11px] tracking-[0.24em] text-white/70 uppercase">About</p>
+          <p className="font-mono text-[11px] tracking-[0.24em] text-white/90 uppercase">About</p>
           <h2 id="about-title" className="font-display mt-4 text-4xl leading-[0.95] text-[color:var(--cream)] md:text-5xl">
             {SITE.name}
           </h2>
@@ -20,7 +20,7 @@ export function AboutContact() {
         </section>
 
         <section id="contact" aria-labelledby="contact-title" className="scroll-mt-8">
-          <p className="font-mono text-[11px] tracking-[0.24em] text-white/70 uppercase">Contact</p>
+          <p className="font-mono text-[11px] tracking-[0.24em] text-white/90 uppercase">Contact</p>
           <h2 id="contact-title" className="font-display mt-4 text-4xl leading-[0.95] text-[color:var(--cream)] md:text-5xl">
             Let&apos;s talk
           </h2>
@@ -46,7 +46,7 @@ export function AboutContact() {
           )}
         </section>
       </div>
-      <p className="mx-auto mt-24 max-w-5xl font-mono text-[11px] tracking-[0.16em] text-white/60 uppercase">
+      <p className="mx-auto mt-24 max-w-5xl font-mono text-[11px] tracking-[0.16em] text-white/85 uppercase">
         © {new Date().getFullYear()} {SITE.name}
       </p>
     </footer>

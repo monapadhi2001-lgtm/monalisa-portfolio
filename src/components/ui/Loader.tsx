@@ -70,7 +70,7 @@ export function Loader({ ready, onDone }: Props) {
       {/* Shutter edge, like the bottom of a roller door */}
       <div className="absolute inset-x-0 bottom-0 h-3 bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.18)_0_2px,transparent_2px_10px)]" />
 
-      <p className="font-mono text-[11px] tracking-[0.24em] text-white/70 uppercase">
+      <p className="font-mono text-[11px] tracking-[0.24em] text-white/90 uppercase">
         Unloading cargo · {SITE.name}
       </p>
 

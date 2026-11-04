@@ -21,6 +21,24 @@ export const SITE = {
   ],
 };
 
+/**
+ * The site's public address, used for SEO (canonical URL, sitemap, share
+ * images). On Vercel it is filled in automatically; set NEXT_PUBLIC_SITE_URL
+ * if you add your own domain.
+ */
+export function siteUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
+export const SEO = {
+  title: "Monalisa Padhi — Portfolio",
+  description:
+    "Monalisa Padhi's portfolio: MBA candidate at Masters Union with an accounting background. Seven projects, each in its own shipping container in an interactive 3D depot.",
+  keywords: ["Monalisa Padhi", "portfolio", "MBA", "Masters Union", "finance", "strategy", "case competition"],
+};
+
 /** Top navigation links → the id of a section on the page. */
 export const NAV_LINKS: { label: string; target: string }[] = [
   { label: "Projects", target: "manifest" },
