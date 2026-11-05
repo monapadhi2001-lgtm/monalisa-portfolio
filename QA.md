@@ -61,6 +61,15 @@ Touch input was simulated on tablets and phones.
 - All local media paths in `projects.ts` resolve: 63 files, all present.
 - External links to check after deploy: LinkedIn, and the sample links in Project 01 (example.com, google.com, YouTube, Vimeo). Replace the samples with your real ones.
 
+## Live-site test (after deploy)
+
+Tested https://monalisa-portfolio-seven.vercel.app in a real Chromium browser at 1366×768 and 390×844.
+
+- **Bug found and fixed: "Explore project" closed the container instead of opening the panel.** The text and buttons inside an open container are HTML placed inside the 3D canvas's event area. A click on them also reached the 3D scene as a click on empty background, which closes the container. Background clicks that start inside that HTML are now ignored.
+- Header now shows the full name, "Monalisa Padhi" (slightly smaller on phones so it fits beside "Let's Talk").
+- Loads in about 5 s with all three web fonts. No horizontal scrolling. No JavaScript errors.
+- LinkedIn returns status 999 to automated checkers; that's LinkedIn blocking bots, and the link works in a normal browser.
+
 ## Still to verify on the live site
 
 - Real-device frame rate on your own phone.
